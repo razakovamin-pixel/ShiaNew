@@ -3452,6 +3452,27 @@ document.addEventListener("DOMContentLoaded",()=>{
 
     <div id="settingsKeyStatus" style="margin-top:14px;padding:14px;border-radius:var(--radius);font-size:13.5px"></div>
 
+    <label style="display:block;font-size:12px;color:var(--text-3);font-family:var(--font-mono);margin-top:20px;margin-bottom:6px">МОДЕЛЬ ИИ</label>
+    <select
+      id="settingsModelSelect"
+      style="width:100%;padding:11px 13px;background:var(--ink-2);border:1px solid var(--border-bright);border-radius:var(--radius);color:var(--text);font-family:var(--font-mono);font-size:13px;margin-bottom:8px"
+    >
+      <option value="claude-opus-4-7">Claude Opus 4.7 — самая мощная, дороже и медленнее</option>
+      <option value="claude-sonnet-4-6">Claude Sonnet 4.6 — баланс качества и скорости (рекомендуется)</option>
+      <option value="claude-haiku-4-5-20251001">Claude Haiku 4.5 — самая быстрая и дешёвая</option>
+      <option value="__custom__">Другая модель (указать вручную)…</option>
+    </select>
+    <input
+      type="text"
+      id="settingsModelCustomInput"
+      placeholder="Например: claude-sonnet-4-6"
+      autocomplete="off"
+      spellcheck="false"
+      style="display:none;width:100%;padding:11px 13px;background:var(--ink-2);border:1px solid var(--border-bright);border-radius:var(--radius);color:var(--text);font-family:var(--font-mono);font-size:13px;margin-bottom:8px"
+    >
+    <button id="settingsSaveModel" class="cmp-btn" style="width:100%;margin-bottom:8px">Сохранить модель</button>
+    <div id="settingsModelStatus" style="margin-top:6px;padding:14px;border-radius:var(--radius);font-size:13.5px"></div>
+
     <button id="settingsClose2" class="cmp-btn" style="margin-top:18px;width:100%">Закрыть</button>
     <div id="settingsStatus" style="display:none"></div>
   </div>
@@ -4685,7 +4706,7 @@ Yalnız etibarlı JSON ilə cavab verin, xaricdə heç bir mətn olmadan, dəqiq
     method: 'POST',
     headers: aiRequestHeaders(),
     body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
+      model: getModel(),
       max_tokens: 1200,
       messages: [{ role: 'user', content: prompt }]
     })
@@ -5338,7 +5359,7 @@ async function sendAiChatMessage(userText) {
       method: 'POST',
       headers: aiRequestHeaders(),
       body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
+        model: getModel(),
         max_tokens: 1000,
         system: buildSystemPrompt(),
         messages,
@@ -5424,7 +5445,7 @@ function initAiChatPanel() {
 }
 
 function initSettingsPanel() {
-  $('btnSettings').addEventListener('click', () => { openPanelEl('settingsPanel'); refreshSettingsKeyUI(); });
+  $('btnSettings').addEventListener('click', () => { openPanelEl('settingsPanel'); refreshSettingsKeyUI(); refreshSettingsModelUI(); });
   $('settingsClose').addEventListener('click', () => closePanel('settingsPanel'));
   const close2 = $('settingsClose2');
   if (close2) close2.addEventListener('click', () => closePanel('settingsPanel'));
@@ -5457,7 +5478,59 @@ function initSettingsPanel() {
     renderSettingsKeyStatus('Ключ удалён.', false);
   });
 
+  // ── Выбор модели ──
+  const modelSelect = $('settingsModelSelect');
+  const modelCustom = $('settingsModelCustomInput');
+  const modelSave = $('settingsSaveModel');
+
+  function syncCustomVisibility() {
+    if (!modelSelect || !modelCustom) return;
+    modelCustom.style.display = modelSelect.value === '__custom__' ? 'block' : 'none';
+  }
+
+  if (modelSelect) modelSelect.addEventListener('change', syncCustomVisibility);
+
+  if (modelSave) modelSave.addEventListener('click', () => {
+    let chosen = modelSelect ? modelSelect.value : '';
+    if (chosen === '__custom__') {
+      chosen = (modelCustom.value || '').trim();
+      if (!chosen) {
+        renderSettingsModelStatus('Введите название модели.', false);
+        return;
+      }
+    }
+    setModel(chosen);
+    renderSettingsModelStatus(`✅ Используется модель: ${chosen}`, true);
+  });
+
   refreshSettingsKeyUI();
+  refreshSettingsModelUI();
+}
+
+function refreshSettingsModelUI() {
+  const modelSelect = $('settingsModelSelect');
+  const modelCustom = $('settingsModelCustomInput');
+  if (!modelSelect) return;
+  const current = getModel();
+  const knownValues = Array.from(modelSelect.options).map(o => o.value).filter(v => v !== '__custom__');
+  if (knownValues.includes(current)) {
+    modelSelect.value = current;
+    modelCustom.style.display = 'none';
+  } else {
+    modelSelect.value = '__custom__';
+    modelCustom.value = current;
+    modelCustom.style.display = 'block';
+  }
+  renderSettingsModelStatus(`Текущая модель: ${current}`, true);
+}
+
+function renderSettingsModelStatus(text, ok) {
+  const el = $('settingsModelStatus');
+  if (!el) return;
+  el.textContent = text;
+  el.style.background = ok ? 'var(--teal-glow)' : 'var(--rose-glow)';
+  el.style.border = '1px solid ' + (ok ? 'rgba(20,168,119,.3)' : 'rgba(225,29,72,.3)');
+  el.style.color = ok ? 'var(--teal-light)' : 'var(--rose)';
 }
 
 function refreshSettingsKeyUI() {
@@ -5478,6 +5551,15 @@ function renderSettingsKeyStatus(text, ok) {
 
 // ── Личный API-ключ пользователя для smartapi.shop ──────────────
 const API_KEY_STORAGE = 'rijal_smartapi_key';
+const MODEL_STORAGE = 'rijal_smartapi_model';
+const DEFAULT_MODEL = 'claude-sonnet-4-6';
+
+function getModel() {
+  try { return (localStorage.getItem(MODEL_STORAGE) || '').trim() || DEFAULT_MODEL; } catch (e) { return DEFAULT_MODEL; }
+}
+function setModel(model) {
+  try { localStorage.setItem(MODEL_STORAGE, model); } catch (e) {}
+}
 
 function getApiKey() {
   try { return (localStorage.getItem(API_KEY_STORAGE) || '').trim(); } catch (e) { return ''; }
@@ -5501,7 +5583,7 @@ function updateAiChatModelLabel() {} // больше не нужна, остав
 function loadAiConfig() { return {}; }
 function saveAiConfig() {}
 function aiConfigIsSet() { return !!getApiKey(); }
-function openSettings() { openPanelEl('settingsPanel'); refreshSettingsKeyUI(); }
+function openSettings() { openPanelEl('settingsPanel'); refreshSettingsKeyUI(); refreshSettingsModelUI(); }
 
 
 // ── STATS ────────────────────────────────────────────────────────
