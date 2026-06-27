@@ -4666,7 +4666,7 @@ Yalnız etibarlı JSON ilə cavab verin, xaricdə heç bir mətn olmadan, dəqiq
 {"name":"Azərbaycan dilində ravi adı","bio":"tərcümə olunmuş mətn","analysis":"tərcümə olunmuş təhlil","sources":["Mənbə 1","Mənbə 2"]}`;
   }
 
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
+  const res = await fetch('/api/v1/messages', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -5308,7 +5308,7 @@ async function sendAiChatMessage(userText) {
   try {
     const messages = history.slice(-18); // последние 18 сообщений
 
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+    const resp = await fetch('/api/v1/messages', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
