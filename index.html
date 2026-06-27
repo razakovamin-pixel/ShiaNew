@@ -3424,23 +3424,34 @@ document.addEventListener("DOMContentLoaded",()=>{
   </div>
 </div>
 
-<!-- SETTINGS PANEL — теперь просто заглушка, ИИ работает без настроек -->
+<!-- SETTINGS PANEL — ввод собственного API-ключа для ИИ -->
 <div class="panel-overlay" id="settingsPanel">
   <div class="panel-box" style="width:min(480px,96vw)">
     <div class="panel-head">
-      <div class="panel-title">⚙️ О проекте</div>
+      <div class="panel-title">⚙️ Настройки ИИ</div>
       <button class="panel-close" id="settingsClose">✕</button>
     </div>
-    <p style="font-size:13.5px;color:var(--text-2);line-height:1.75;margin-bottom:12px">
-      ИИ-ассистент работает на базе <strong style="color:var(--teal-light)">Claude (Anthropic)</strong> и специализирован на науке ар-Риджаль: передатчики хадисов, иснады, оценки надёжности по шиитским и суннитским источникам.
+    <p style="font-size:13.5px;color:var(--text-2);line-height:1.75;margin-bottom:14px">
+      ИИ-ассистент работает через <strong style="color:var(--teal-light)">smartapi.shop</strong>. Чтобы пользоваться переводом карточек и ИИ-чатом, вставьте сюда свой API-ключ. Ключ хранится только в вашем браузере (localStorage) и никуда, кроме smartapi.shop, не передаётся.
     </p>
-    <p style="font-size:13px;color:var(--text-3);line-height:1.65">
-      Никаких ключей и настроек не требуется — ИИ подключён встроенно и готов к работе прямо сейчас.
-    </p>
-    <div style="margin-top:20px;padding:14px;background:var(--teal-glow);border:1px solid rgba(20,168,119,.3);border-radius:var(--radius)">
-      <div style="font-size:12px;color:var(--teal-light);font-family:var(--font-mono);margin-bottom:4px">СТАТУС</div>
-      <div style="font-size:14px;color:var(--text)">✅ ИИ подключён и готов</div>
+    <label style="display:block;font-size:12px;color:var(--text-3);font-family:var(--font-mono);margin-bottom:6px">API-КЛЮЧ</label>
+    <input
+      type="password"
+      id="settingsApiKeyInput"
+      placeholder="Вставьте ваш ключ от smartapi.shop"
+      autocomplete="off"
+      spellcheck="false"
+      style="width:100%;padding:11px 13px;background:var(--ink-2);border:1px solid var(--border-bright);border-radius:var(--radius);color:var(--text);font-family:var(--font-mono);font-size:13px;margin-bottom:6px"
+    >
+    <button id="settingsShowKey" type="button" style="background:none;border:none;color:var(--teal);font-size:12px;cursor:pointer;padding:0;margin-bottom:14px">Показать ключ</button>
+
+    <div style="display:flex;gap:10px;margin-bottom:8px">
+      <button id="settingsSaveKey" class="cmp-btn" style="flex:1">Сохранить</button>
+      <button id="settingsClearKey" class="cmp-btn" style="flex:1;opacity:.75">Удалить ключ</button>
     </div>
+
+    <div id="settingsKeyStatus" style="margin-top:14px;padding:14px;border-radius:var(--radius);font-size:13.5px"></div>
+
     <button id="settingsClose2" class="cmp-btn" style="margin-top:18px;width:100%">Закрыть</button>
     <div id="settingsStatus" style="display:none"></div>
   </div>
@@ -4666,9 +4677,13 @@ Yalnız etibarlı JSON ilə cavab verin, xaricdə heç bir mətn olmadan, dəqiq
 {"name":"Azərbaycan dilində ravi adı","bio":"tərcümə olunmuş mətn","analysis":"tərcümə olunmuş təhlil","sources":["Mənbə 1","Mənbə 2"]}`;
   }
 
+  if (!getApiKey()) {
+    throw new Error('NO_API_KEY');
+  }
+
   const res = await fetch('/api/v1/messages', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: aiRequestHeaders(),
     body: JSON.stringify({
       model: 'claude-sonnet-4-20250514',
       max_tokens: 1200,
@@ -4876,7 +4891,11 @@ async function renderDetail(id) {
         analysis: tx.analysis,
         sources: tx.sources
       });
-      toast(failMsg[state.lang] || '⚠ Translation failed');
+      if (err && err.message === 'NO_API_KEY') {
+        toast('⚠ Укажите API-ключ в настройках (⚙), чтобы включить перевод');
+      } else {
+        toast(failMsg[state.lang] || '⚠ Translation failed');
+      }
     }
   } else {
     fillDetail(tx, null);
@@ -5289,6 +5308,13 @@ function buildSystemPrompt() {
 }
 
 async function sendAiChatMessage(userText) {
+  if (!getApiKey()) {
+    renderChatMessage('user', userText);
+    const noKeyBubble = renderChatMessage('assistant', '⚠ Сначала укажите ваш API-ключ в настройках (значок ⚙ сверху), затем повторите вопрос.');
+    noKeyBubble.style.color = 'var(--rose)';
+    return;
+  }
+
   const wrap = $('aiChatMessages');
   const sendBtn = $('aiChatSend');
   const input = $('aiChatInput');
@@ -5310,7 +5336,7 @@ async function sendAiChatMessage(userText) {
 
     const resp = await fetch('/api/v1/messages', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: aiRequestHeaders(),
       body: JSON.stringify({
         model: 'claude-sonnet-4-6',
         max_tokens: 1000,
@@ -5398,18 +5424,84 @@ function initAiChatPanel() {
 }
 
 function initSettingsPanel() {
-  $('btnSettings').addEventListener('click', () => openPanelEl('settingsPanel'));
+  $('btnSettings').addEventListener('click', () => { openPanelEl('settingsPanel'); refreshSettingsKeyUI(); });
   $('settingsClose').addEventListener('click', () => closePanel('settingsPanel'));
   const close2 = $('settingsClose2');
   if (close2) close2.addEventListener('click', () => closePanel('settingsPanel'));
   $('settingsPanel').addEventListener('click', e => { if (e.target === $('settingsPanel')) closePanel('settingsPanel'); });
+
+  const input = $('settingsApiKeyInput');
+  const showBtn = $('settingsShowKey');
+  const saveBtn = $('settingsSaveKey');
+  const clearBtn = $('settingsClearKey');
+
+  if (showBtn) showBtn.addEventListener('click', () => {
+    const isPw = input.type === 'password';
+    input.type = isPw ? 'text' : 'password';
+    showBtn.textContent = isPw ? 'Скрыть ключ' : 'Показать ключ';
+  });
+
+  if (saveBtn) saveBtn.addEventListener('click', () => {
+    const val = (input.value || '').trim();
+    if (!val) {
+      renderSettingsKeyStatus('Введите ключ перед сохранением.', false);
+      return;
+    }
+    setApiKey(val);
+    renderSettingsKeyStatus('✅ Ключ сохранён в этом браузере.', true);
+  });
+
+  if (clearBtn) clearBtn.addEventListener('click', () => {
+    clearApiKeyStorage();
+    input.value = '';
+    renderSettingsKeyStatus('Ключ удалён.', false);
+  });
+
+  refreshSettingsKeyUI();
+}
+
+function refreshSettingsKeyUI() {
+  const input = $('settingsApiKeyInput');
+  if (!input) return;
+  input.value = getApiKey();
+  renderSettingsKeyStatus(getApiKey() ? '✅ Ключ сохранён и используется для запросов к ИИ.' : '⚠ Ключ не задан — переводы и ИИ-чат работать не будут.', !!getApiKey());
+}
+
+function renderSettingsKeyStatus(text, ok) {
+  const el = $('settingsKeyStatus');
+  if (!el) return;
+  el.textContent = text;
+  el.style.background = ok ? 'var(--teal-glow)' : 'var(--rose-glow)';
+  el.style.border = '1px solid ' + (ok ? 'rgba(20,168,119,.3)' : 'rgba(225,29,72,.3)');
+  el.style.color = ok ? 'var(--teal-light)' : 'var(--rose)';
+}
+
+// ── Личный API-ключ пользователя для smartapi.shop ──────────────
+const API_KEY_STORAGE = 'rijal_smartapi_key';
+
+function getApiKey() {
+  try { return (localStorage.getItem(API_KEY_STORAGE) || '').trim(); } catch (e) { return ''; }
+}
+function setApiKey(key) {
+  try { localStorage.setItem(API_KEY_STORAGE, key); } catch (e) {}
+}
+function clearApiKeyStorage() {
+  try { localStorage.removeItem(API_KEY_STORAGE); } catch (e) {}
+}
+
+// Заголовки для запросов к /api/v1/messages с учётом ключа пользователя
+function aiRequestHeaders() {
+  const headers = { 'Content-Type': 'application/json' };
+  const key = getApiKey();
+  if (key) headers['x-api-key'] = key;
+  return headers;
 }
 
 function updateAiChatModelLabel() {} // больше не нужна, оставляем заглушку
 function loadAiConfig() { return {}; }
 function saveAiConfig() {}
-function aiConfigIsSet() { return true; }
-function openSettings() { openPanelEl('settingsPanel'); }
+function aiConfigIsSet() { return !!getApiKey(); }
+function openSettings() { openPanelEl('settingsPanel'); refreshSettingsKeyUI(); }
 
 
 // ── STATS ────────────────────────────────────────────────────────
