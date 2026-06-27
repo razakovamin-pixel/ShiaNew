@@ -3408,68 +3408,41 @@ document.addEventListener("DOMContentLoaded",()=>{
 <div class="panel-overlay" id="aiChatPanel">
   <div class="panel-box" style="width:min(560px,96vw);display:flex;flex-direction:column;max-height:min(85dvh,720px)">
     <div class="panel-head">
-      <div class="panel-title">💬 Чат с ИИ — Ильм ар-Риджаль</div>
+      <div class="panel-title">💬 ИИ-ассистент — Риджаль</div>
       <button class="panel-close" id="aiChatClose">✕</button>
     </div>
-
-    <!-- No-config warning -->
-    <div id="aiChatNoConfig" style="display:none;background:rgba(200,155,60,.1);border:1px solid var(--gold);border-radius:var(--radius);padding:14px 16px;margin-bottom:14px;font-size:13px;color:var(--text-2);line-height:1.6">
-      ⚠️ Сначала задайте Base URL и API-ключ в
-      <a href="#" id="aiChatOpenSettingsLink" style="color:var(--gold);text-decoration:underline">настройках ИИ</a>.
-    </div>
-
-    <!-- Messages -->
-    <div id="aiChatMessages" style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding:4px 2px 12px;min-height:240px;max-height:50vh"></div>
-
-    <!-- Composer -->
+    <div id="aiChatMessages" style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding:4px 2px 12px;min-height:200px;max-height:52vh"></div>
     <div style="display:flex;gap:8px;align-items:flex-end;border-top:1px solid var(--border);padding-top:12px">
       <textarea id="aiChatInput" rows="1" placeholder="Спросите про передатчика, риджаль, иснад…"
         style="flex:1;resize:none;background:var(--ink-2);border:1px solid var(--border-bright);border-radius:var(--radius);color:var(--text);font-family:var(--font-body);font-size:14px;padding:10px 12px;max-height:120px;outline:none"></textarea>
       <button id="aiChatSend" class="cmp-btn" style="white-space:nowrap;margin:0">Отправить</button>
     </div>
-    <div style="display:flex;justify-content:space-between;margin-top:8px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
       <button id="aiChatClear" style="background:none;border:none;color:var(--text-3);font-size:12px;cursor:pointer;text-decoration:underline">Очистить чат</button>
-      <span id="aiChatModelLabel" style="font-size:11px;color:var(--text-3);font-family:var(--font-mono)"></span>
+      <span style="font-size:10px;color:var(--text-3);font-family:var(--font-mono)">claude-sonnet · риджаль-режим</span>
     </div>
   </div>
 </div>
 
-<!-- SETTINGS PANEL (AI config) -->
+<!-- SETTINGS PANEL — теперь просто заглушка, ИИ работает без настроек -->
 <div class="panel-overlay" id="settingsPanel">
   <div class="panel-box" style="width:min(480px,96vw)">
     <div class="panel-head">
-      <div class="panel-title">⚙️ Настройки ИИ</div>
+      <div class="panel-title">⚙️ О проекте</div>
       <button class="panel-close" id="settingsClose">✕</button>
     </div>
-
-    <p style="font-size:12.5px;color:var(--text-3);line-height:1.6;margin-bottom:16px">
-      Здесь задаются параметры подключения к вашему ИИ-провайдеру (OpenAI-совместимый API).
-      Данные сохраняются только в этом браузере (localStorage) и никуда не отправляются, кроме
-      указанного вами Base URL.
+    <p style="font-size:13.5px;color:var(--text-2);line-height:1.75;margin-bottom:12px">
+      ИИ-ассистент работает на базе <strong style="color:var(--teal-light)">Claude (Anthropic)</strong> и специализирован на науке ар-Риджаль: передатчики хадисов, иснады, оценки надёжности по шиитским и суннитским источникам.
     </p>
-
-    <label style="display:block;font-size:11px;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Base URL</label>
-    <input type="text" id="settingsBaseUrl" placeholder="https://api.openai.com/v1"
-      style="width:100%;background:var(--ink-2);border:1px solid var(--border-bright);border-radius:var(--radius);color:var(--text);font-family:var(--font-mono);font-size:13px;padding:10px 12px;margin-bottom:14px;outline:none">
-
-    <label style="display:block;font-size:11px;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">API-ключ</label>
-    <div style="position:relative;margin-bottom:14px">
-      <input type="password" id="settingsApiKey" placeholder="sk-..."
-        style="width:100%;background:var(--ink-2);border:1px solid var(--border-bright);border-radius:var(--radius);color:var(--text);font-family:var(--font-mono);font-size:13px;padding:10px 38px 10px 12px;outline:none">
-      <button id="settingsToggleKey" type="button" title="Показать/скрыть"
-        style="position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text-3);cursor:pointer;padding:6px">👁</button>
+    <p style="font-size:13px;color:var(--text-3);line-height:1.65">
+      Никаких ключей и настроек не требуется — ИИ подключён встроенно и готов к работе прямо сейчас.
+    </p>
+    <div style="margin-top:20px;padding:14px;background:var(--teal-glow);border:1px solid rgba(20,168,119,.3);border-radius:var(--radius)">
+      <div style="font-size:12px;color:var(--teal-light);font-family:var(--font-mono);margin-bottom:4px">СТАТУС</div>
+      <div style="font-size:14px;color:var(--text)">✅ ИИ подключён и готов</div>
     </div>
-
-    <label style="display:block;font-size:11px;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Модель</label>
-    <input type="text" id="settingsModel" placeholder="gpt-4o-mini"
-      style="width:100%;background:var(--ink-2);border:1px solid var(--border-bright);border-radius:var(--radius);color:var(--text);font-family:var(--font-mono);font-size:13px;padding:10px 12px;margin-bottom:18px;outline:none">
-
-    <div style="display:flex;gap:8px;flex-wrap:wrap">
-      <button id="settingsSave" class="cmp-btn" style="margin:0">Сохранить</button>
-      <button id="settingsTest" style="background:var(--ink-2);border:1px solid var(--border-bright);border-radius:var(--radius);color:var(--text-2);font-size:13px;padding:9px 16px;cursor:pointer;font-family:var(--font-body)">Проверить соединение</button>
-      <button id="settingsClear" style="background:none;border:none;color:var(--rose);font-size:12px;cursor:pointer;text-decoration:underline;margin-left:auto">Удалить данные</button>
-    </div>
-    <div id="settingsStatus" style="margin-top:12px;font-size:12.5px;line-height:1.5"></div>
+    <button id="settingsClose2" class="cmp-btn" style="margin-top:18px;width:100%">Закрыть</button>
+    <div id="settingsStatus" style="display:none"></div>
   </div>
 </div>
 
@@ -5267,126 +5240,36 @@ function openPanelEl(id) { $(id).classList.add('open'); }
 // ═══════════════════════════════════════════════════════════════
 // НАСТРОЙКИ ИИ — Base URL / API-ключ / модель
 // ═══════════════════════════════════════════════════════════════
-const AI_CFG_KEY = 'rijal_ai_config_v1';
+// ═══════════════════════════════════════════════════════════════
+// ИИ-ЧАТ — Anthropic Claude (встроенный, без ключа)
+// ═══════════════════════════════════════════════════════════════
 const AI_CHAT_HISTORY_KEY = 'rijal_ai_chat_v1';
 
-function loadAiConfig() {
-  try {
-    return JSON.parse(localStorage.getItem(AI_CFG_KEY)) || { baseUrl: '', apiKey: '', model: '' };
-  } catch { return { baseUrl: '', apiKey: '', model: '' }; }
-}
-
-function saveAiConfig(cfg) {
-  localStorage.setItem(AI_CFG_KEY, JSON.stringify(cfg));
-}
-
-function aiConfigIsSet() {
-  const cfg = loadAiConfig();
-  return !!(cfg.baseUrl && cfg.apiKey);
-}
-
-function openSettings() {
-  const cfg = loadAiConfig();
-  $('settingsBaseUrl').value = cfg.baseUrl || '';
-  $('settingsApiKey').value = cfg.apiKey || '';
-  $('settingsModel').value = cfg.model || '';
-  $('settingsStatus').textContent = '';
-  openPanelEl('settingsPanel');
-}
-
-function initSettingsPanel() {
-  $('btnSettings').addEventListener('click', openSettings);
-  $('settingsClose').addEventListener('click', () => closePanel('settingsPanel'));
-  $('settingsPanel').addEventListener('click', e => { if (e.target === $('settingsPanel')) closePanel('settingsPanel'); });
-
-  $('settingsToggleKey').addEventListener('click', () => {
-    const inp = $('settingsApiKey');
-    inp.type = inp.type === 'password' ? 'text' : 'password';
-  });
-
-  $('settingsSave').addEventListener('click', () => {
-    const cfg = {
-      baseUrl: $('settingsBaseUrl').value.trim().replace(/\/+$/, ''),
-      apiKey: $('settingsApiKey').value.trim(),
-      model: $('settingsModel').value.trim() || 'gpt-4o-mini',
-    };
-    saveAiConfig(cfg);
-    $('settingsStatus').innerHTML = '<span style="color:var(--teal-light)">✓ Сохранено в этом браузере.</span>';
-    toast('✓ Настройки ИИ сохранены');
-    updateAiChatModelLabel();
-  });
-
-  $('settingsClear').addEventListener('click', () => {
-    localStorage.removeItem(AI_CFG_KEY);
-    $('settingsBaseUrl').value = '';
-    $('settingsApiKey').value = '';
-    $('settingsModel').value = '';
-    $('settingsStatus').innerHTML = '<span style="color:var(--text-3)">Данные удалены.</span>';
-    toast('Настройки ИИ удалены');
-    updateAiChatModelLabel();
-  });
-
-  $('settingsTest').addEventListener('click', async () => {
-    const cfg = {
-      baseUrl: $('settingsBaseUrl').value.trim().replace(/\/+$/, ''),
-      apiKey: $('settingsApiKey').value.trim(),
-      model: $('settingsModel').value.trim() || 'gpt-4o-mini',
-    };
-    if (!cfg.baseUrl || !cfg.apiKey) {
-      $('settingsStatus').innerHTML = '<span style="color:var(--rose)">Укажите Base URL и API-ключ.</span>';
-      return;
-    }
-    $('settingsStatus').innerHTML = '<span class="ar-loading">Проверка соединения…</span>';
-    try {
-      const resp = await fetch(`${cfg.baseUrl}/chat/completions`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${cfg.apiKey}`,
-        },
-        body: JSON.stringify({
-          model: cfg.model,
-          messages: [{ role: 'user', content: 'ping' }],
-          max_tokens: 5,
-        }),
-      });
-      if (resp.ok) {
-        $('settingsStatus').innerHTML = '<span style="color:var(--teal-light)">✓ Соединение успешно установлено.</span>';
-      } else {
-        const errText = await resp.text().catch(() => '');
-        $('settingsStatus').innerHTML = `<span style="color:var(--rose)">✗ Ошибка ${resp.status}: ${(errText || resp.statusText).slice(0, 200)}</span>`;
-      }
-    } catch (err) {
-      $('settingsStatus').innerHTML = `<span style="color:var(--rose)">✗ Не удалось подключиться: ${err.message}</span>`;
-    }
-  });
-}
-
-// ═══════════════════════════════════════════════════════════════
-// ИИ-ЧАТ
-// ═══════════════════════════════════════════════════════════════
 function loadChatHistory() {
   try { return JSON.parse(localStorage.getItem(AI_CHAT_HISTORY_KEY)) || []; }
   catch { return []; }
 }
 function saveChatHistory(history) {
-  localStorage.setItem(AI_CHAT_HISTORY_KEY, JSON.stringify(history));
+  try { localStorage.setItem(AI_CHAT_HISTORY_KEY, JSON.stringify(history)); } catch(e) {}
 }
 
 function renderChatMessage(role, content) {
   const wrap = $('aiChatMessages');
   const bubble = document.createElement('div');
   const isUser = role === 'user';
-  bubble.style.maxWidth = '85%';
-  bubble.style.alignSelf = isUser ? 'flex-end' : 'flex-start';
-  bubble.style.background = isUser ? 'var(--teal-glow)' : 'var(--ink-2)';
-  bubble.style.border = `1px solid ${isUser ? 'var(--border-bright)' : 'var(--border)'}`;
-  bubble.style.borderRadius = 'var(--radius)';
-  bubble.style.padding = '10px 13px';
-  bubble.style.fontSize = '13.5px';
-  bubble.style.lineHeight = '1.6';
-  bubble.style.color = isUser ? 'var(--text)' : 'var(--text-2)';
-  bubble.style.whiteSpace = 'pre-wrap';
+  bubble.style.cssText = `
+    max-width:88%;
+    align-self:${isUser ? 'flex-end' : 'flex-start'};
+    background:${isUser ? 'var(--teal-glow)' : 'var(--ink-2)'};
+    border:1px solid ${isUser ? 'rgba(20,168,119,.35)' : 'var(--border)'};
+    border-radius:${isUser ? '14px 14px 4px 14px' : '14px 14px 14px 4px'};
+    padding:10px 13px;
+    font-size:13.5px;
+    line-height:1.65;
+    color:${isUser ? 'var(--text)' : 'var(--text-2)'};
+    white-space:pre-wrap;
+    word-break:break-word;
+  `;
   bubble.textContent = content;
   wrap.appendChild(bubble);
   wrap.scrollTop = wrap.scrollHeight;
@@ -5395,86 +5278,88 @@ function renderChatMessage(role, content) {
 
 function buildSystemPrompt() {
   const total = state.data ? state.data.length : 0;
-  return `Ты — экспертный ассистент проекта "Ильм ар-Риджаль" (علم الرجال), посвящённого критическому анализу передатчиков хадисов в шиитской и суннитской традициях. В базе ${total} передатчиков с биографиями, статусами надёжности (тика/даиф/спорный) по обеим традициям, анализом двойных стандартов и источниками. Отвечай по существу вопросов о риджале, иснадах, конкретных передатчиках, методологии критики хадисов. Если не уверен в фактах — говори об этом прямо, не выдумывай атрибуции.`;
+  const active = state.activeId !== null ? state.data.find(d => d.id === state.activeId) : null;
+  let ctx = '';
+  if (active) {
+    ctx = `\n\nСейчас открыта карточка передатчика: «${active.name}» (${active.arabicName || ''}).` +
+      ` Шиитская оценка: ${active.shiaStatus || '—'}. Суннитская оценка: ${active.sunniStatus || '—'}.` +
+      (active.bio ? ` Биография: ${active.bio.slice(0, 400)}` : '');
+  }
+  return `Ты — экспертный ассистент проекта "Ильм ар-Риджаль" (علم الرجال). База содержит ${total} передатчиков хадисов с биографиями, статусами надёжности (тика/даиф/спорный) по шиитским и суннитским источникам. Отвечай на русском языке. Будь точен в фактах о риджале, иснадах, передатчиках и методологии. Если не уверен — говори об этом прямо.${ctx}`;
 }
 
 async function sendAiChatMessage(userText) {
-  const cfg = loadAiConfig();
-  if (!cfg.baseUrl || !cfg.apiKey) {
-    $('aiChatNoConfig').style.display = 'block';
-    return;
-  }
-  $('aiChatNoConfig').style.display = 'none';
+  const wrap = $('aiChatMessages');
+  const sendBtn = $('aiChatSend');
+  const input = $('aiChatInput');
 
   renderChatMessage('user', userText);
+
   let history = loadChatHistory();
   history.push({ role: 'user', content: userText });
 
   const thinkingBubble = renderChatMessage('assistant', '…');
   thinkingBubble.classList.add('ai-thinking');
 
-  const sendBtn = $('aiChatSend');
   sendBtn.disabled = true;
+  input.disabled = true;
   sendBtn.textContent = '…';
 
   try {
-    const messages = [
-      { role: 'system', content: buildSystemPrompt() },
-      ...history.slice(-20), // последние 20 сообщений для контекста
-    ];
+    const messages = history.slice(-18); // последние 18 сообщений
 
-    const resp = await fetch(`${cfg.baseUrl}/chat/completions`, {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${cfg.apiKey}`,
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: cfg.model || 'gpt-4o-mini',
+        model: 'claude-sonnet-4-6',
+        max_tokens: 1000,
+        system: buildSystemPrompt(),
         messages,
-        temperature: 0.4,
       }),
     });
 
     if (!resp.ok) {
       const errText = await resp.text().catch(() => '');
-      thinkingBubble.textContent = `✗ Ошибка ${resp.status}: ${(errText || resp.statusText).slice(0, 300)}`;
+      thinkingBubble.textContent = `✗ Ошибка ${resp.status}: ${errText.slice(0, 200) || resp.statusText}`;
       thinkingBubble.style.color = 'var(--rose)';
+      history.pop(); // убираем незавершённый запрос
+      saveChatHistory(history);
       return;
     }
 
     const data = await resp.json();
-    const reply = data?.choices?.[0]?.message?.content || '(пустой ответ)';
+    const reply = data?.content?.[0]?.text || '(пустой ответ)';
+
     thinkingBubble.textContent = reply;
     thinkingBubble.classList.remove('ai-thinking');
 
     history.push({ role: 'assistant', content: reply });
     saveChatHistory(history);
+
   } catch (err) {
     thinkingBubble.textContent = `✗ Сетевая ошибка: ${err.message}`;
     thinkingBubble.style.color = 'var(--rose)';
+    history.pop();
+    saveChatHistory(history);
   } finally {
     sendBtn.disabled = false;
+    input.disabled = false;
     sendBtn.textContent = 'Отправить';
+    input.focus();
   }
-}
-
-function updateAiChatModelLabel() {
-  const cfg = loadAiConfig();
-  const label = $('aiChatModelLabel');
-  if (!label) return;
-  label.textContent = cfg.model ? `модель: ${cfg.model}` : '';
 }
 
 function openAiChat() {
   openPanelEl('aiChatPanel');
-  $('aiChatNoConfig').style.display = aiConfigIsSet() ? 'none' : 'block';
-  updateAiChatModelLabel();
-  // Render existing history on first open
   const wrap = $('aiChatMessages');
   if (!wrap.dataset.rendered) {
     const history = loadChatHistory();
     history.forEach(m => renderChatMessage(m.role, m.content));
+    if (history.length === 0) {
+      // Приветственное сообщение
+      renderChatMessage('assistant', 'Ас-саляму алейкум! Я ИИ-ассистент проекта Ильм ар-Риджаль. Могу помочь с вопросами о передатчиках хадисов, иснадах, методологии критики хадисов и оценках надёжности. Спрашивайте!');
+    }
     wrap.dataset.rendered = '1';
   }
   $('aiChatInput').focus();
@@ -5484,11 +5369,6 @@ function initAiChatPanel() {
   $('btnAiChat').addEventListener('click', openAiChat);
   $('aiChatClose').addEventListener('click', () => closePanel('aiChatPanel'));
   $('aiChatPanel').addEventListener('click', e => { if (e.target === $('aiChatPanel')) closePanel('aiChatPanel'); });
-  $('aiChatOpenSettingsLink').addEventListener('click', e => {
-    e.preventDefault();
-    closePanel('aiChatPanel');
-    openSettings();
-  });
 
   const input = $('aiChatInput');
   const send = () => {
@@ -5508,12 +5388,28 @@ function initAiChatPanel() {
   });
 
   $('aiChatClear').addEventListener('click', () => {
-    saveChatHistory([]);
-    $('aiChatMessages').innerHTML = '';
-    $('aiChatMessages').dataset.rendered = '1';
-    toast('Чат очищен');
+    localStorage.removeItem(AI_CHAT_HISTORY_KEY);
+    const wrap = $('aiChatMessages');
+    wrap.innerHTML = '';
+    delete wrap.dataset.rendered;
+    renderChatMessage('assistant', 'Чат очищен. Чем могу помочь?');
+    wrap.dataset.rendered = '1';
   });
 }
+
+function initSettingsPanel() {
+  $('btnSettings').addEventListener('click', () => openPanelEl('settingsPanel'));
+  $('settingsClose').addEventListener('click', () => closePanel('settingsPanel'));
+  const close2 = $('settingsClose2');
+  if (close2) close2.addEventListener('click', () => closePanel('settingsPanel'));
+  $('settingsPanel').addEventListener('click', e => { if (e.target === $('settingsPanel')) closePanel('settingsPanel'); });
+}
+
+function updateAiChatModelLabel() {} // больше не нужна, оставляем заглушку
+function loadAiConfig() { return {}; }
+function saveAiConfig() {}
+function aiConfigIsSet() { return true; }
+function openSettings() { openPanelEl('settingsPanel'); }
 
 
 // ── STATS ────────────────────────────────────────────────────────
